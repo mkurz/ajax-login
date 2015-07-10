@@ -33,10 +33,22 @@ document.body.addEventListener('submit', function ajax(e){
   e.preventDefault();
   setTimeout(function(){
     if(e.target.hasAttribute('data-push-state')){
-      history.pushState('title', {success:true}, "/success.html");
+      // Only works in chrome when the original login form does not exist anymore after push (or ajax)
+      // So either remove (or hide) the form or try to change it's action url (? - didn't test)
+      // Also make sure all other forms (see above) point to a different action url
+      // otherwise they are considered as login form too (to test just rename the action attributes).
+      e.target.parentNode.removeChild(e.target);
+      // Or alternatively just hide the form: e.target.style.display = 'none';
+      history.replaceState({success:true}, 'title', "/success.html");
+
+      // This is working too!!! (uncomment the history.xxxState(..) line above before) (it ALSO works when the http response isn't a redirect but just a 200)
+      //var request = new XMLHttpRequest();
+      //request.open('POST', '/login', true);
+      //request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      //request.send("redirectTo=/dynamic.html");
     }else{
       e.target.submit();
     }
-  }, 1000);
+  }, 1);
 }, false);
 </script>
